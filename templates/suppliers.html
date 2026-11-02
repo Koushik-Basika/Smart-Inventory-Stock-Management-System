@@ -1,0 +1,6 @@
+{% extends "base.html" %}{% block title %}Suppliers | StockWise{% endblock %}
+{% block content %}<h2>Suppliers</h2><p class="text-muted">Maintain supplier contact information.</p>
+<div class="row g-3"><div class="col-lg-4"><div class="panel"><h5>Add supplier</h5><form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="mb-2"><label class="form-label">Name *</label><input class="form-control" name="name" required></div><div class="mb-2"><label class="form-label">Email</label><input class="form-control" type="email" name="email"></div><div class="mb-2"><label class="form-label">Phone</label><input class="form-control" name="phone"></div><div class="mb-3"><label class="form-label">Address</label><textarea class="form-control" name="address"></textarea></div><button class="btn btn-primary">Save supplier</button></form></div></div>
+<div class="col-lg-8"><div class="panel table-responsive"><table class="table"><thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Products</th></tr></thead><tbody>{% for s in suppliers %}<tr><td>{{ s.name }}</td><td>{{ s.email or '-' }}</td><td>{{ s.phone or '-' }}</td><td>{{ s.products|length }}</td></tr>{% else %}<tr><td colspan="4" class="text-muted">No suppliers added.</td></tr>{% endfor %}</tbody></table></div></div></div>
+{% endblock %}

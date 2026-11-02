@@ -1,0 +1,34 @@
+{% extends "base.html" %}{% block title %}Dashboard | StockWise{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+<div><h2 class="mb-1">Dashboard</h2><p class="text-muted mb-0">Inventory overview and recent activity</p></div>
+<a class="btn btn-primary" href="{{ url_for('add_product') }}">+ Add product</a>
+</div>
+<div class="row g-3 mb-4">
+<div class="col-sm-6 col-xl-3"><div class="stat-card"><span>Total products</span><h2>{{ total_products }}</h2></div></div>
+<div class="col-sm-6 col-xl-3"><div class="stat-card"><span>Total units in stock</span><h2>{{ total_units }}</h2></div></div>
+<div class="col-sm-6 col-xl-3"><div class="stat-card"><span>Inventory value</span><h2>₹{{ "%.2f"|format(stock_value|float) }}</h2></div></div>
+<div class="col-sm-6 col-xl-3"><div class="stat-card"><span>Low-stock items</span><h2 class="text-danger">{{ low_stock|length }}</h2></div></div>
+</div>
+<div class="row g-3">
+<div class="col-lg-7"><div class="panel"><h5>Lowest stock levels</h5><canvas id="stockChart" height="125"></canvas></div></div>
+<div class="col-lg-5"><div class="panel"><h5>Low-stock alerts</h5>
+{% if low_stock %}<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Product</th><th>Available</th><th>Reorder at</th></tr></thead><tbody>
+{% for p in low_stock %}<tr><td>{{ p.name }}<div class="small text-muted">{{ p.sku }}</div></td><td><span class="badge bg-danger">{{ p.quantity }}</span></td><td>{{ p.reorder_level }}</td></tr>{% endfor %}
+</tbody></table></div>{% else %}<p class="text-muted">No low-stock products.</p>{% endif %}
+</div></div>
+<div class="col-12"><div class="panel"><h5>Recent stock activity</h5>
+<div class="table-responsive"><table class="table"><thead><tr><th>Date</th><th>Product</th><th>Type</th><th>Quantity</th><th>By</th><th>Note</th></tr></thead><tbody>
+{% for t in recent %}<tr><td>{{ t.created_at.strftime('%d %b %Y %H:%M') }}</td><td>{{ t.product.name }}</td><td><span class="badge {{ 'bg-success' if t.transaction_type == 'IN' else 'bg-warning text-dark' }}">{{ t.transaction_type }}</span></td><td>{{ t.quantity }}</td><td>{{ t.user.username }}</td><td>{{ t.note or '-' }}</td></tr>{% else %}<tr><td colspan="6" class="text-muted">No transactions yet.</td></tr>{% endfor %}
+</tbody></table></div></div></div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+new Chart(document.getElementById('stockChart'), {
+ type:'bar',
+ data:{labels:{{ chart_labels|tojson }},datasets:[{label:'Units available',data:{{ chart_values|tojson }},borderWidth:1}]},
+ options:{responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}
+});
+</script>
+{% endblock %}

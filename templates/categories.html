@@ -1,0 +1,5 @@
+{% extends "base.html" %}{% block title %}Categories | StockWise{% endblock %}
+{% block content %}<h2>Categories</h2><p class="text-muted">Group products into useful categories.</p>
+<div class="row g-3"><div class="col-lg-4"><div class="panel"><h5>Add category</h5><form method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><div class="mb-3"><input class="form-control" name="name" placeholder="e.g. Electronics" required></div><button class="btn btn-primary">Add category</button></form></div></div>
+<div class="col-lg-8"><div class="panel"><h5>Existing categories</h5><ul class="list-group list-group-flush">{% for c in categories %}<li class="list-group-item d-flex justify-content-between"><span>{{ c.name }}</span><span class="badge bg-secondary">{{ c.products|length }} products</span></li>{% else %}<li class="list-group-item text-muted">No categories yet.</li>{% endfor %}</ul></div></div></div>
+{% endblock %}

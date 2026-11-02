@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block title %}{{ 'Edit' if product else 'Add' }} Product | StockWise{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-xl-8"><div class="panel">
+<h2>{{ 'Edit product' if product else 'Add product' }}</h2>
+<form method="post">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="row g-3">
+<div class="col-md-8"><label class="form-label">Product name *</label><input class="form-control" name="name" value="{{ product.name if product else '' }}" required></div>
+<div class="col-md-4"><label class="form-label">SKU *</label><input class="form-control" name="sku" value="{{ product.sku if product else '' }}" required></div>
+<div class="col-md-6"><label class="form-label">Category</label><select class="form-select" name="category_id"><option value="">Choose category</option>{% for c in categories %}<option value="{{ c.id }}" {% if product and product.category_id == c.id %}selected{% endif %}>{{ c.name }}</option>{% endfor %}</select></div>
+<div class="col-md-6"><label class="form-label">Supplier</label><select class="form-select" name="supplier_id"><option value="">Choose supplier</option>{% for s in suppliers %}<option value="{{ s.id }}" {% if product and product.supplier_id == s.id %}selected{% endif %}>{{ s.name }}</option>{% endfor %}</select></div>
+{% if not product %}<div class="col-md-4"><label class="form-label">Opening quantity</label><input class="form-control" type="number" min="0" name="quantity" value="0"></div>{% endif %}
+<div class="col-md-4"><label class="form-label">Reorder level</label><input class="form-control" type="number" min="0" name="reorder_level" value="{{ product.reorder_level if product else 5 }}" required></div>
+<div class="col-md-4"><label class="form-label">Unit price (₹)</label><input class="form-control" type="number" min="0" step="0.01" name="unit_price" value="{{ product.unit_price if product else '0.00' }}" required></div>
+<div class="col-12"><label class="form-label">Description</label><textarea class="form-control" name="description" rows="3">{{ product.description if product else '' }}</textarea></div>
+</div><div class="mt-4"><button class="btn btn-primary">Save product</button> <a class="btn btn-outline-secondary" href="{{ url_for('products') }}">Cancel</a></div>
+</form></div></div></div>
+{% endblock %}
